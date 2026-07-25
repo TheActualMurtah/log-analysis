@@ -3,3 +3,10 @@ duckdb>=1.0.0
 drain3>=0.9.11
 pytz>=2023.3
 pandas>=2.0.0
+drain3==0.9.11
+jsonpickle==1.5.1
+cachetools==4.2.1
+fastapi
+uvicorn[standard]
+python-multipart
+duckdb
