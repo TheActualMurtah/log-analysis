@@ -32,6 +32,11 @@ Requirements:
 SEVERE_LEVELS = {"SEVERE", "FATAL", "ERROR"}
 
 
+# Inputs: none (reads CLI arguments from sys.argv).
+# Output: configured argparse.ArgumentParser instance.
+# Options: supports --input, --output, --model, --provider, retrieval-related flags, and prompt flags.
+# Pre: module constants are available.
+# Post: parser contains all supported command-line options for this script.
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Summarize analyzer top-message output using a pluggable AI provider."
@@ -112,6 +117,11 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+# Inputs: extra_instructions text appended by caller.
+# Output: finalized system prompt string.
+# Options: appends extra instructions only when non-empty after strip().
+# Pre: DEFAULT_PROMPT is defined.
+# Post: returned prompt is never surrounded by leading/trailing blank space from DEFAULT_PROMPT.
 def build_prompt(extra_instructions: str) -> str:
     prompt = DEFAULT_PROMPT.strip()
     if extra_instructions.strip():
@@ -119,6 +129,11 @@ def build_prompt(extra_instructions: str) -> str:
     return prompt
 
 
+# Inputs: path to the analyzer top-N templates file.
+# Output: non-empty file content as a string.
+# Options: none.
+# Pre: input file exists and is readable.
+# Post: returns stripped text; raises FileNotFoundError/ValueError when file is missing or empty.
 def load_input(path: Path) -> str:
     if not path.exists():
         raise FileNotFoundError(
@@ -134,6 +149,11 @@ def load_input(path: Path) -> str:
     return content
 
 
+# Inputs: log_root file/directory and max_files limit.
+# Output: list of candidate log file paths.
+# Options: prefers files matching jenkins.log* and falls back to any non-gzip files.
+# Pre: max_files should be positive.
+# Post: returns at most max_files paths; returns [] when log_root is invalid or no matches are found.
 def discover_log_files(log_root: Path, max_files: int) -> list[Path]:
     if log_root.is_file():
         return [log_root]
@@ -153,6 +173,11 @@ def discover_log_files(log_root: Path, max_files: int) -> list[Path]:
     return candidates[:max_files]
 
 
+# Inputs: iterable of log file paths.
+# Output: flattened list of parsed LogEvent objects.
+# Options: skips files that raise parse errors.
+# Pre: analyzer.analyze is importable and file paths are accessible.
+# Post: each returned event has source_path attached for retrieval evidence context.
 def load_events(paths: Iterable[Path]) -> list[LogEvent]:
     events: list[LogEvent] = []
     for path in paths:
@@ -167,6 +192,11 @@ def load_events(paths: Iterable[Path]) -> list[LogEvent]:
     return events
 
 
+# Inputs: single LogEvent instance.
+# Output: stable grouping key string for retrieval buckets.
+# Options: chooses template_id first, then template text, then message prefix fallback.
+# Pre: event has at least one of template_id/template/message fields.
+# Post: returns a non-empty key suitable for dictionary grouping.
 def _template_key(ev: LogEvent) -> str:
     if ev.template_id is not None:
         return f"template_id:{ev.template_id}"
@@ -175,6 +205,11 @@ def _template_key(ev: LogEvent) -> str:
     return f"message:{ev.message[:120]}"
 
 
+# Inputs: single LogEvent instance.
+# Output: tuple used for sorting events by severity and timestamp.
+# Options: severe levels are defined by SEVERE_LEVELS.
+# Pre: event fields may be None.
+# Post: severe events rank before non-severe events when sorting reverse=True.
 def _event_sort_key(ev: LogEvent):
     level = (ev.level or "").upper()
     sev_rank = 1 if level in SEVERE_LEVELS else 0
@@ -182,6 +217,11 @@ def _event_sort_key(ev: LogEvent):
     return (sev_rank, ts)
 
 
+# Inputs: parsed events list and retrieval tuning values.
+# Output: markdown retrieval evidence block for prompt augmentation.
+# Options: controls template selection via template budget, per-template examples, and rare threshold.
+# Pre: events are parsed from logs and can include optional metadata.
+# Post: returns either a detailed evidence section or "No retrieval evidence available." when empty.
 def build_retrieval_context(
     events: list[LogEvent],
     template_budget: int,
@@ -253,6 +293,11 @@ def build_retrieval_context(
     return "\n".join(lines).strip()
 
 
+# Inputs: CLI arguments and optional environment/provider configuration.
+# Output: process exit code (0 success, 1 failure).
+# Options: supports dry-run/show-prompt and optional retrieval augmentation.
+# Pre: input file and provider credentials are available unless running dry-run.
+# Post: writes summary markdown to output path on success.
 def main() -> int:
     args = build_parser().parse_args()
     prompt = build_prompt(args.extra_instructions)

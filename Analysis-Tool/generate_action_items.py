@@ -26,6 +26,11 @@ Requirements:
 """
 
 
+# Inputs: none (reads CLI arguments from sys.argv).
+# Output: configured argparse.ArgumentParser instance.
+# Options: supports --input, --output, --model, --provider, and prompt/debug flags.
+# Pre: module constants are available.
+# Post: parser contains all command-line options required by this script.
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Generate action items from a previously generated AI summary using a pluggable AI provider."
@@ -71,6 +76,11 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+# Inputs: extra_instructions text appended by caller.
+# Output: finalized system prompt string.
+# Options: appends additional text only when non-empty after strip().
+# Pre: DEFAULT_PROMPT is defined.
+# Post: returned prompt is trimmed and includes appended instructions when provided.
 def build_prompt(extra_instructions: str) -> str:
     prompt = DEFAULT_PROMPT.strip()
     if extra_instructions.strip():
@@ -78,6 +88,11 @@ def build_prompt(extra_instructions: str) -> str:
     return prompt
 
 
+# Inputs: path to the AI findings summary file.
+# Output: non-empty file content as a string.
+# Options: none.
+# Pre: file exists and is readable.
+# Post: returns stripped text; raises FileNotFoundError/ValueError if missing or empty.
 def load_input(path: Path) -> str:
     if not path.exists():
         raise FileNotFoundError(
@@ -90,6 +105,11 @@ def load_input(path: Path) -> str:
     return content
 
 
+# Inputs: CLI arguments and optional environment/provider configuration.
+# Output: process exit code (0 success, 1 failure).
+# Options: supports dry-run/show-prompt and optional model/provider selection.
+# Pre: input file is present unless running dry-run with existing input.
+# Post: writes action-items markdown to output path on success.
 def main() -> int:
     args = build_parser().parse_args()
     prompt = build_prompt(args.extra_instructions)

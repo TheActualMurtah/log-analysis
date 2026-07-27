@@ -13,6 +13,11 @@ from typing import Optional
 class AIProvider(ABC):
     """Common interface for AI backends used by analysis tooling."""
 
+    # Inputs: input_text user payload, prompt system instructions, model override or None.
+    # Output: provider-generated summary text.
+    # Options: implementation decides how to use model override.
+    # Pre: subclass implements provider call logic.
+    # Post: returns non-empty summary text or raises RuntimeError on provider failure.
     @abstractmethod
     def summarize(self, input_text: str, prompt: str, model: Optional[str]) -> str:
         """Return a summary from provider output text."""
@@ -25,6 +30,11 @@ _GH_CLI_FALLBACK_PATHS = (
 )
 
 
+# Inputs: none.
+# Output: GitHub auth token string or None.
+# Options: checks gh on PATH first, then common Homebrew install paths.
+# Pre: GitHub CLI may or may not be installed/authenticated.
+# Post: returns first valid token found without raising for missing gh binaries.
 def _read_gh_auth_token() -> Optional[str]:
     """Best-effort token lookup from GitHub CLI auth state.
 
@@ -53,6 +63,11 @@ def _read_gh_auth_token() -> Optional[str]:
 
 
 class BobProvider(AIProvider):
+    # Inputs: input_text payload, prompt instructions, optional model name.
+    # Output: summary text from Bob CLI stdout.
+    # Options: passes --model only when provided.
+    # Pre: bob CLI exists and is executable in PATH.
+    # Post: returns non-empty summary or raises RuntimeError when execution fails.
     def summarize(self, input_text: str, prompt: str, model: Optional[str]) -> str:
         command = [
             "bob",
@@ -105,9 +120,19 @@ class GitHubCopilotProvider(AIProvider):
     adapt to org-specific Copilot gateways without code changes.
     """
 
+    # Inputs: CopilotConfig with token, endpoint, default model, and timeout.
+    # Output: initialized provider instance.
+    # Options: none.
+    # Pre: config.token is set to a valid credential.
+    # Post: provider stores config for future summarize calls.
     def __init__(self, config: CopilotConfig):
         self.config = config
 
+    # Inputs: input_text payload, prompt instructions, optional model override.
+    # Output: summary text parsed from Copilot chat completions response.
+    # Options: uses override model when provided, else config default; fixed temperature=0.2.
+    # Pre: API token and endpoint are valid and reachable.
+    # Post: returns non-empty content or raises RuntimeError for HTTP/network/format errors.
     def summarize(self, input_text: str, prompt: str, model: Optional[str]) -> str:
         payload = {
             "model": model or self.config.model,
@@ -156,6 +181,11 @@ class GitHubCopilotProvider(AIProvider):
         return content
 
 
+# Inputs: provider_name string.
+# Output: concrete AIProvider implementation instance.
+# Options: supports copilot aliases and bob.
+# Pre: required credentials/tools for selected provider are available.
+# Post: returns initialized provider or raises RuntimeError for unknown/misconfigured providers.
 def build_provider(provider_name: str) -> AIProvider:
     normalized = provider_name.strip().lower()
     if normalized == "bob":

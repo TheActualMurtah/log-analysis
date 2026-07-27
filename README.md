@@ -115,3 +115,91 @@ The DuckDB layer only needs two entry points:
 > DuckDB layer. They still work, but the queries they perform are now expressed
 > as SQL in the query layer, so they are effectively redundant and kept only as
 > convenience shortcuts. New analysis should go through DuckDB, not these.
+
+---
+
+## AI provider setup (Bob or GitHub Copilot)
+
+The AI scripts in Analysis-Tool support two providers:
+
+- `copilot` (default)
+- `bob`
+
+You choose the provider with `--provider` in both scripts:
+
+- `python3 Analysis-Tool/summarize_with_ai.py --provider <copilot|bob>`
+- `python3 Analysis-Tool/generate_action_items.py --provider <copilot|bob>`
+
+
+### Option 1: Use GitHub Copilot
+
+Provider name:
+
+- `--provider copilot`
+
+The scripts look for credentials in this order:
+
+1. `COPILOT_API_KEY`
+2. `GITHUB_TOKEN`
+3. `GH_TOKEN`
+4. `gh auth token` from GitHub CLI
+
+You only need one of the above.
+
+Recommended setup with GitHub CLI:
+
+```bash
+gh auth login
+gh auth token
+```
+
+Or set a token directly in your shell session:
+
+```bash
+export GITHUB_TOKEN="<your-token>"
+```
+
+Run with Copilot:
+
+```bash
+python3 Analysis-Tool/summarize_with_ai.py --provider copilot
+python3 Analysis-Tool/generate_action_items.py --provider copilot
+```
+
+Optional Copilot environment overrides:
+
+- `COPILOT_API_BASE_URL` (default: `https://api.githubcopilot.com`)
+- `COPILOT_API_PATH` (default: `/chat/completions`)
+- `COPILOT_MODEL` (default: `gpt-4o-mini`)
+- `COPILOT_TIMEOUT_SECONDS` (default: `60`)
+
+### Troubleshooting
+
+- If you see `Unknown AI provider`, verify `--provider` is `copilot` or `bob`.
+- If you see missing credential errors for Copilot, set one token env var or run `gh auth login`.
+- If you see `bob CLI was not found in PATH`, install Bob and confirm `bob --help` works.
+
+### Option 2: Use Bob
+
+1. Install the Bob CLI on your machine.
+2. Make sure the `bob` command is available in your shell `PATH`.
+3. Authenticate Bob if your Bob setup requires login or API configuration.
+
+Quick check:
+
+```bash
+bob --help
+```
+
+Run with Bob:
+
+```bash
+python3 Analysis-Tool/summarize_with_ai.py --provider bob
+python3 Analysis-Tool/generate_action_items.py --provider bob
+```
+
+Optional model override:
+
+```bash
+python3 Analysis-Tool/summarize_with_ai.py --provider bob --model <model-name>
+```
