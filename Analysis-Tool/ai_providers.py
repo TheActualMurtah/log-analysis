@@ -198,7 +198,11 @@ class MockProvider(AIProvider):
             "2. Inspect severe events within the Investigate tab."
         )
 
-
+# Inputs: provider_name string.
+# Output: concrete AIProvider implementation instance.
+# Options: supports copilot aliases and bob.
+# Pre: required credentials/tools for selected provider are available.
+# Post: returns initialized provider or raises RuntimeError for unknown/misconfigured providers.
 def build_provider(provider_name: str) -> AIProvider:
     normalized = provider_name.strip().lower()
     if normalized in {"mock", "demo"}:
