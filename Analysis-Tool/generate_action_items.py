@@ -12,7 +12,7 @@ DEFAULT_INPUT = SCRIPT_DIR / "analyzer_output" / "ai-summary.md"
 DEFAULT_OUTPUT = SCRIPT_DIR / "analyzer_output" / "action-items.md"
 
 
-DEFAULT_PROMPT = """You are a senior site reliability engineer reviewing a summary of Jenkins log findings.
+DEFAULT_PROMPT = """You are a senior site reliability engineer reviewing a summary of log findings.
 
 Read the findings summary from stdin and produce a separate, focused action-items response.
 
