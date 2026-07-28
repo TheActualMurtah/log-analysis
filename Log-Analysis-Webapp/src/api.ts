@@ -66,10 +66,6 @@ export async function fetchInWindow(
   return jsonOrThrow<WindowResult>(res);
 }
 
-// ─────────────────────────────────────────────────────────────
-// Saved analyses (persisted in the backend's DuckDB store).
-// ─────────────────────────────────────────────────────────────
-
 // One row from GET /saved-analyses (backend EventStore.list_files()).
 export type SavedAnalysis = {
   source_file: string; // the key used to load/delete this analysis

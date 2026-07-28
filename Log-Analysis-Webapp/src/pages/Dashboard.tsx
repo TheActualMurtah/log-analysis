@@ -192,7 +192,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Time range control (client-side view state — see note in code) */}
+      {/* Time range control (client-side view state) */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "20px 24px 0 24px", flexWrap: "wrap" }}>
         <div style={{ fontSize: 12, fontWeight: 600, color: colors.textMuted, marginRight: 4 }}>TIME RANGE</div>
         {RANGE_DEFS.map((r) => {
@@ -367,10 +367,8 @@ export default function Dashboard() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Export report modal. Top templates come from /top-templates when a
-// real log is loaded; the PDF download itself is a backend concern.
-// ─────────────────────────────────────────────────────────────
+// Export modal: shows a summary of the current analysis (cards, feed, top templates) 
+// and allows the user to export it as a PDF. Note: PDF export is not supported yet
 
 function ExportModal({
   onClose,

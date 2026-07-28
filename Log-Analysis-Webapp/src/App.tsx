@@ -11,7 +11,7 @@ import { AnalysisProvider } from "./state/analysis";
 //   #/dashboard   → Log overview   (this app)
 //   #/rules       → Rules          (this app)
 //   #/investigate → Investigate    (this app)
-//   #/query       → placeholder    (deferred)
+//   #/query       → placeholder    (coming soon)
 // ─────────────────────────────────────────────────────────────
 
 function parseRoute(): string {

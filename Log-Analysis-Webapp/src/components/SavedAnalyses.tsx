@@ -2,11 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { colors, font } from "../theme";
 import { useAnalysis } from "../state/analysis";
 
-// ─────────────────────────────────────────────────────────────
-// Saved-analyses header control: a "Save" button (persists the
-// current analysis via POST /saved-analyses) and a "Saved" dropdown
-// that lists persisted analyses with load / delete actions.
-// ─────────────────────────────────────────────────────────────
+// Saved analyses dropdown. Shows a list of previously saved analyses, with buttons to load or 
+// delete each one. Also has a "Save" button to save the current analysis.
 
 const btn: React.CSSProperties = {
   padding: "8px 14px",

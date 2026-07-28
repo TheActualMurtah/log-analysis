@@ -212,10 +212,8 @@ export default function Rules() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// Add/edit a triage rule. Produces a UIRule; persistence + re-apply
-// are handled by the analysis context.
-// ─────────────────────────────────────────────────────────────
+// Rule editor modal: create or edit a rule. Validates inputs and calls onSave 
+// with the new/updated rule.
 
 function RuleEditorModal({
   initial,

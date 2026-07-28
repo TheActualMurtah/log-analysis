@@ -10,13 +10,6 @@ import {
 } from "../api";
 import type { AnalyzeRule, SavedAnalysis } from "../api";
 
-// ─────────────────────────────────────────────────────────────
-// Shared analysis state. Holds the current backend analysis result
-// (or null → sample mode), the triage rule set, and the load flow.
-// One provider wraps the whole app so the Load-log button, the
-// Dashboard, and the Rules page all read the same state.
-// ─────────────────────────────────────────────────────────────
-
 // UI-side rule shape (matches the Rules design). Mapped to the
 // backend Rule shape (analyzer.Rule) at analyze time.
 export type UIRule = {

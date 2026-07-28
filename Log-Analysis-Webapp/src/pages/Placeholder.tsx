@@ -1,10 +1,6 @@
 import { colors } from "../theme";
 
-// ─────────────────────────────────────────────────────────────
-// Placeholder for routes owned elsewhere:
-//   • Investigate — built by another team member.
-//   • Query — deferred, not being implemented yet.
-// ─────────────────────────────────────────────────────────────
+// Placeholder for query page
 
 export default function Placeholder({ title, note }: { title: string; note: string }) {
   return (
